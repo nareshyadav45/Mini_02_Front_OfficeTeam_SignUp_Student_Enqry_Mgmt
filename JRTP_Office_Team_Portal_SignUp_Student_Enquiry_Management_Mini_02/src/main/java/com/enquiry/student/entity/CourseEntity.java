@@ -16,7 +16,5 @@ public class CourseEntity {
 	@Id
 	private Integer cid;
 	private String courseName;
-	
-	
 
 }
