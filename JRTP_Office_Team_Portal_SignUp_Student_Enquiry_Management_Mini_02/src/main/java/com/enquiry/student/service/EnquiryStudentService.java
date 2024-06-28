@@ -5,9 +5,10 @@ import java.util.List;
 import com.enquiry.student.binding.DashboardUser;
 import com.enquiry.student.binding.EnquiryFilterForm;
 import com.enquiry.student.binding.EnquiryForm;
+import com.enquiry.student.binding.ListOfEnquiriesResponse;
 
 
-public interface EnquiryStudent {
+public interface EnquiryStudentService {
 	
 	public List<String> getListOfCourses();
 	
@@ -15,9 +16,25 @@ public interface EnquiryStudent {
 
 	public DashboardUser dashboardUser(Integer userId);
 	
-	public String addStudentEnquiry(EnquiryForm enquiryForm);
+	public boolean addStudentEnquiry(EnquiryForm enquiryForm);
 	
-	public List<EnquiryForm> getStudentEnquiries(Integer UserId,EnquiryFilterForm enquiryFilterForm);
+	public Object getStudentEnquiries(Integer userId,EnquiryFilterForm enquiryFilterForm);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	public EnquiryForm getEnquiryByEnquiryId(Integer eid);
 	

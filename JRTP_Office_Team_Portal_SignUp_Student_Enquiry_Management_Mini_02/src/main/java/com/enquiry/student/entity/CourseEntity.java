@@ -11,10 +11,25 @@ import lombok.Data;
 @Entity
 @Table(name="Nit_Courses")
 @Data
-public class CourseEntity {
+public class CourseEntity { 
 	
 	@Id
+	@GeneratedValue
 	private Integer cid;
 	private String courseName;
+	public Integer getCid() {
+		return cid;
+	}
+	public void setCid(Integer cid) {
+		this.cid = cid;
+	}
+	public String getCourseName() {
+		return courseName;
+	}
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+	
+	
 
 }

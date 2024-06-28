@@ -7,5 +7,7 @@ import com.enquiry.student.entity.UserEntity;
 public interface UserRepository extends JpaRepository<UserEntity, Integer>{
 	
 	public UserEntity findByEmail(String email);
+	
+	public UserEntity findByPassword(String password);
 
 }

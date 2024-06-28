@@ -6,11 +6,12 @@ import com.enquiry.student.binding.UnLockForm;
 
 public interface UserService {
 	
-	public String login(LoginForm form);
+	public Object login(LoginForm form);
 	
 	public boolean registration(RegistrationForm form);
 	
 	public String unLock(UnLockForm form);
+	
 	public String forgotPwd(String email);
 
 }

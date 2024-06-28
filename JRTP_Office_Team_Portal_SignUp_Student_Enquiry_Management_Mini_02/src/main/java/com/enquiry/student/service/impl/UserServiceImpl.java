@@ -4,17 +4,27 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.enquiry.student.binding.DashboardUser;
 import com.enquiry.student.binding.LoginForm;
 import com.enquiry.student.binding.RegistrationForm;
 import com.enquiry.student.binding.UnLockForm;
+import com.enquiry.student.controllers.EnquiryStudentController;
 import com.enquiry.student.entity.UserEntity;
 import com.enquiry.student.repositories.UserRepository;
 import com.enquiry.student.service.UserService;
 import com.enquiry.student.utility.EmailUtils;
 import com.enquiry.student.utility.PwdUtils;
 
+import jakarta.servlet.http.HttpSession;
+
 @Service
 public class UserServiceImpl implements UserService{
+	
+	@Autowired
+	private EnquiryStudentController enquiryStudentController;
+	
+	@Autowired
+	private HttpSession session;
 	
 	@Autowired
 	private EmailUtils emailUtils;
@@ -26,9 +36,41 @@ public class UserServiceImpl implements UserService{
 	private PwdUtils pwdUtils;
 
 	@Override
-	public String login(LoginForm form) {
+	public Object login(LoginForm form) {
+		//TODO : Check Logging user account is unlocked , only unlocked users can login, if not dispaly the message like please first unlock the account
 		
-		return null;
+		String email = form.getEmail();
+		UserEntity userEntity = this.userRepository.findByEmail(email);
+		
+		if(userEntity!=null) {
+			if(!userEntity.getAccountStatus().matches("LOCKED")) {
+				if(form.getPassword().matches(userEntity.getPassword())) {
+					//DashboardUser userDashboard=new DashboardUser();
+					
+					this.session.setAttribute("loggedInUserId", userEntity.getUid());
+					Object sessionUserId = session.getAttribute("loggedInUserId");
+					String string = sessionUserId.toString();
+					int userId = Integer.parseInt(string);
+					
+					
+					//TODO : Call the Enquiry Controller DashBoard Method and return the user dashboard based on id who successfully logged in 
+					          // return dashboard of user for this method as return type
+					DashboardUser dashBoardOfUser = enquiryStudentController.dashBoardOfUser(userId);
+					
+					//return "http://localhost:8080/dashboard?userid="+sessionUserId+"";
+					return dashBoardOfUser;	
+				}else {
+					return "Invalid Password";
+				}
+				
+			}else {
+				return "You Account is still unlocked , please unlock and login here";
+			}
+			
+		}else {
+			return "Invalid Mail Id";
+		}
+		
 	}
   
 	@Override
@@ -68,7 +110,7 @@ public class UserServiceImpl implements UserService{
 		body.append("Temporary Pwd :"+pwd);
 		body.append("<br>");
 		body.append("<br>");
-		body.append("<a href=http://localhost:8080/unlock>Click here to unlcok the account</a>");
+		body.append("<a href=http://localhost:8080/unlock/email?="+form.getEmail() +">Click here to unlcok the account</a>");
 		
 		this.emailUtils.generateMail(emailTo, subject,body.toString());
 		
@@ -76,15 +118,61 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public String unLock(UnLockForm form) {
-		// TODO Auto-generated method stub
-		return null;
+	public String unLock(UnLockForm form) {	
+		String response=null;
+		UserEntity byEmail = this.userRepository.findByEmail(form.getEmail());
+		if(byEmail!=null) {
+		
+			if(byEmail.getAccountStatus().matches("Unlocked")) {
+				return response="Your account already unlocked, can't unlock multiple times";
+				
+			}else {
+				if(byEmail.getPassword().matches(form.getTemPassword())) {
+					if(form.getNewPassword().matches(form.getConfirmPassword())) {
+						byEmail.setPassword(form.getConfirmPassword());
+						byEmail.setAccountStatus("Unlocked");
+						userRepository.save(byEmail);
+					response="New Accont Unlocked Successfully";
+					}else {
+						response= "New Password and Confirmation Password not matched";
+					}
+					
+					}else {
+						return "\"Given Temporary PWD iS Invalid\"";
+					}		
+			}	
+			
+		}else {
+			return response="given mail id invalid";
+		}
+		
+		return response;
 	}
 
 	@Override
 	public String forgotPwd(String email) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		// TODO : Check With Given Mail Id User is there or not , if present send the pwd to user registered mail id
+		UserEntity userEntity = this.userRepository.findByEmail(email);
+		if(userEntity!=null) {
+			String password = userEntity.getPassword();
+			
+			String to = userEntity.getEmail();
+			String subject="Forgot password of users";
+			String body ="<h3>Dear  "+userEntity.getUserName()+" <br> your forgoted password is :"+ password+" </h3>";
+			
+			boolean mail = this.emailUtils.generateMail(to, subject,  body);
+		    if(mail==true) {
+		    	return "Successfull, Forgotten Password Sent to Registered Mail Id, please check It!!";
+		    } 
+		    else {
+		    	return "Something Went Wrong server side";
+		    }
+			
+		}else {
+			return "No Account Found With Given Mail Id";
+		}
+
 	}
 
 }
