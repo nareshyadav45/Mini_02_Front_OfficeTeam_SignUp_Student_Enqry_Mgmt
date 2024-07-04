@@ -8,6 +8,7 @@ import com.enquiry.student.binding.DashboardUser;
 import com.enquiry.student.binding.LoginForm;
 import com.enquiry.student.binding.RegistrationForm;
 import com.enquiry.student.binding.UnLockForm;
+import com.enquiry.student.constants.AppConstants;
 import com.enquiry.student.controllers.EnquiryStudentController;
 import com.enquiry.student.entity.UserEntity;
 import com.enquiry.student.repositories.UserRepository;
@@ -47,8 +48,8 @@ public class UserServiceImpl implements UserService{
 				if(form.getPassword().matches(userEntity.getPassword())) {
 					//DashboardUser userDashboard=new DashboardUser();
 					
-					this.session.setAttribute("loggedInUserId", userEntity.getUid());
-					Object sessionUserId = session.getAttribute("loggedInUserId");
+					this.session.setAttribute(AppConstants.LOGGED_IN_USER_ID, userEntity.getUid());
+					Object sessionUserId = session.getAttribute(AppConstants.LOGGED_IN_USER_ID);
 					String string = sessionUserId.toString();
 					int userId = Integer.parseInt(string);
 					
@@ -60,15 +61,15 @@ public class UserServiceImpl implements UserService{
 					//return "http://localhost:8080/dashboard?userid="+sessionUserId+"";
 					return dashBoardOfUser;	
 				}else {
-					return "Invalid Password";
+					return AppConstants.USER_INVALID_PASSWORD_MSG;
 				}
 				
 			}else {
-				return "You Account is still unlocked , please unlock and login here";
+				return AppConstants.USER_ACC_UNLOCK_MSG;
 			}
 			
 		}else {
-			return "Invalid Mail Id";
+			return AppConstants.USER_INVALID_MAIL_ID_MSG;
 		}
 		
 	}
@@ -104,7 +105,7 @@ public class UserServiceImpl implements UserService{
 		
 		String emailTo = form.getEmail();
 		
-		String subject="Unlock The Account With Temp Pwd";
+		String subject=AppConstants.REGISTRATION_MAIL_SUBJECT;
 		
 		StringBuffer body=new StringBuffer();
 		body.append("Temporary Pwd :"+pwd);
@@ -123,27 +124,27 @@ public class UserServiceImpl implements UserService{
 		UserEntity byEmail = this.userRepository.findByEmail(form.getEmail());
 		if(byEmail!=null) {
 		
-			if(byEmail.getAccountStatus().matches("Unlocked")) {
-				return response="Your account already unlocked, can't unlock multiple times";
+			if(byEmail.getAccountStatus().matches(AppConstants.STR_UNLOCKED)) {
+				return response=AppConstants.STR_UNLOCK_EXIST;
 				
 			}else {
 				if(byEmail.getPassword().matches(form.getTemPassword())) {
 					if(form.getNewPassword().matches(form.getConfirmPassword())) {
 						byEmail.setPassword(form.getConfirmPassword());
-						byEmail.setAccountStatus("Unlocked");
+						byEmail.setAccountStatus(AppConstants.STR_UNLOCKED);
 						userRepository.save(byEmail);
-					response="New Accont Unlocked Successfully";
+					response=AppConstants.ACC_UNLOCK_SUCCESS_MSG;
 					}else {
-						response= "New Password and Confirmation Password not matched";
+						response= AppConstants.ACC_NEW_AND_CONFIRMATION_PWD_NOT_MATCH;
 					}
 					
 					}else {
-						return "\"Given Temporary PWD iS Invalid\"";
+						return AppConstants.ACC_TEMP_PWD_INVALID_MSG;
 					}		
 			}	
 			
 		}else {
-			return response="given mail id invalid";
+			return response=AppConstants.USER_INVALID_MAIL_ID_MSG;
 		}
 		
 		return response;
@@ -158,19 +159,19 @@ public class UserServiceImpl implements UserService{
 			String password = userEntity.getPassword();
 			
 			String to = userEntity.getEmail();
-			String subject="Forgot password of users";
+			String subject=AppConstants.FORGOT_PWD_SUBJECT;
 			String body ="<h3>Dear  "+userEntity.getUserName()+" <br> your forgoted password is :"+ password+" </h3>";
 			
 			boolean mail = this.emailUtils.generateMail(to, subject,  body);
 		    if(mail==true) {
-		    	return "Successfull, Forgotten Password Sent to Registered Mail Id, please check It!!";
+		    	return AppConstants.FORGOT_PWD_SUCCESS_MSG;
 		    } 
 		    else {
-		    	return "Something Went Wrong server side";
+		    	return AppConstants.SERVER_SIDE_PROBLEM_MAIL_SEND_MSG;
 		    }
 			
 		}else {
-			return "No Account Found With Given Mail Id";
+			return AppConstants.USER_INVALID_MAIL_ID_MSG;
 		}
 
 	}

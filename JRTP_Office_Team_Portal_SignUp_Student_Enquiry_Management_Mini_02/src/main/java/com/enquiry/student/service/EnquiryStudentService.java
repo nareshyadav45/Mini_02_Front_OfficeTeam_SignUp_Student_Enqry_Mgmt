@@ -6,6 +6,7 @@ import com.enquiry.student.binding.DashboardUser;
 import com.enquiry.student.binding.EnquiryFilterForm;
 import com.enquiry.student.binding.EnquiryForm;
 import com.enquiry.student.binding.ListOfEnquiriesResponse;
+import com.enquiry.student.entity.StudentEnquiry;
 
 
 public interface EnquiryStudentService {
@@ -19,6 +20,10 @@ public interface EnquiryStudentService {
 	public boolean addStudentEnquiry(EnquiryForm enquiryForm);
 	
 	public Object getStudentEnquiries(Integer userId,EnquiryFilterForm enquiryFilterForm);
+	
+	public Object studentEnquiries(EnquiryFilterForm enquiryFilterForm);
+	
+	public String updateEnquiryByEnquiryId(Integer enquiryId, EnquiryForm enquiryFormUpdated);
 	
 	
 	
