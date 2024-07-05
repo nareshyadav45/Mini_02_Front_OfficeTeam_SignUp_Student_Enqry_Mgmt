@@ -25,22 +25,6 @@ public interface EnquiryStudentService {
 	
 	public String updateEnquiryByEnquiryId(Integer enquiryId, EnquiryForm enquiryFormUpdated);
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	public EnquiryForm getEnquiryByEnquiryId(Integer eid);
 	
 	
