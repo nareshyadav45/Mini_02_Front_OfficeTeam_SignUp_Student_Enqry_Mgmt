@@ -93,21 +93,4 @@ public class EnquiryStudentController {
 		return updateEnquiryByEnquiryId;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
