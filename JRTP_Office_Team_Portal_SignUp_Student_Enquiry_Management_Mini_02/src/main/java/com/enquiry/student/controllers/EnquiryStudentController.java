@@ -14,7 +14,6 @@ import com.enquiry.student.binding.EnquiryForm;
 import com.enquiry.student.binding.ListOfEnquiriesResponse;
 import com.enquiry.student.constants.AppConstants;
 import com.enquiry.student.service.EnquiryStudentService;
-
 import jakarta.servlet.http.HttpSession;
 
 @RestController
